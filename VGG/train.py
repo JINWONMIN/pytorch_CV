@@ -5,7 +5,7 @@ import torch.optim as optim
 import time
 
 from dataset import SDataset
-from model import VGG, MyEnsemble
+from model import VGG, VGG16, MyEnsemble
 from utils import Params
 
 
@@ -19,12 +19,12 @@ def train():
 
     train_loader, test_loader = Dataset.load_data()
 
-    modelA = VGG(vgg_name=params.model_name, num_classes=params.num_classes).to(device)
+    modelA = VGG16(num_classes=params.num_classes).to(device)
     criterion = nn.CrossEntropyLoss().cuda()
     optimizer = optim.Adam(modelA.parameters(), lr=params.lr)
 
     start_time = time.time()
-    for epoch in params.epochs:
+    for epoch in range(params.epochs):
         running_loss = 0.0
         for i, data in enumerate(train_loader, 0):
             # get the inputs
@@ -48,8 +48,8 @@ def train():
     print(time.time() - start_time)
     print('Finished Training')
 
-    class_correct = list(0. for i in params.epochs)
-    class_total = list(0. for i in params.epochs)
+    class_correct = list(0. for i in range(params.epochs))
+    class_total = list(0. for i in range(params.epochs))
     with torch.no_grad():
         for data in test_loader:
             inputs, labels = data
